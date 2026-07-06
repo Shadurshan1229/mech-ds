@@ -1,0 +1,200 @@
+/*
+  MECH Design System - Token File
+  Version: 2.0.0
+  URL: https://ds.themech.studio/tokens.css
+  Usage: <link rel="stylesheet" href="https://ds.themech.studio/tokens.css">
+
+  Import once at the root of any MECH project.
+  Tokens work in both light and dark mode.
+  Dark mode activates via: document.documentElement.setAttribute('data-theme', 'dark')
+*/
+
+/* ============================================================
+   LIGHT MODE (default)
+   ============================================================ */
+:root,
+[data-theme="light"] {
+
+  /* Core signal */
+  --mech-orange:          #FF5B24;
+  --mech-dark:            #1D1A19;
+
+  /* Backgrounds */
+  --mech-paper:           #F9F2EE;   /* base - page background */
+  --mech-paper-s:         #F1E7E2;   /* secondary - cards, sidebar */
+
+  /* Ink scale */
+  --mech-ink-80:          #3A3330;
+  --mech-ink-50:          #8C7D76;
+  --mech-ink-20:          #D4C8C2;
+
+  /* Semantic signals */
+  --mech-signal-green:    #2ECC71;
+  --mech-signal-red:      #E74C3C;
+
+  /* Semantic aliases - use these in component code */
+  --bg-base:              var(--mech-paper);
+  --bg-surface:           var(--mech-paper-s);
+  --bg-overlay:           rgba(29, 26, 25, 0.40);
+
+  --text-primary:         var(--mech-dark);
+  --text-secondary:       var(--mech-ink-80);
+  --text-muted:           var(--mech-ink-50);
+  --text-inverse:         var(--mech-paper);
+
+  --border-default:       var(--mech-ink-20);
+  --border-strong:        var(--mech-ink-80);
+  --border-signal:        var(--mech-orange);
+
+  /* Focus ring */
+  --ring-signal:          0 0 0 2px rgba(255, 91, 36, 0.30);
+
+  /* Shadows - flat system, focus ring only */
+  --shadow-none:          none;
+  --shadow-signal:        var(--ring-signal);
+}
+
+/* ============================================================
+   DARK MODE
+   ============================================================ */
+[data-theme="dark"] {
+
+  /* Core signal - orange unchanged */
+  --mech-orange:          #FF5B24;
+  --mech-dark:            #F1E7E2;   /* inverted - text becomes cream */
+
+  /* Backgrounds */
+  --mech-paper:           #1D1A19;   /* base - darkest surface */
+  --mech-paper-s:         #252220;   /* secondary - cards, sidebar */
+
+  /* Ink scale - inverted toward cream */
+  --mech-ink-80:          #C4B8B2;
+  --mech-ink-50:          #8C7D76;   /* midpoint stays neutral */
+  --mech-ink-20:          #3A3330;   /* borders become dark */
+
+  /* Semantic signals - unchanged */
+  --mech-signal-green:    #2ECC71;
+  --mech-signal-red:      #E74C3C;
+
+  /* Semantic aliases */
+  --bg-base:              #1D1A19;
+  --bg-surface:           #252220;
+  --bg-overlay:           rgba(0, 0, 0, 0.60);
+
+  --text-primary:         #F1E7E2;
+  --text-secondary:       #C4B8B2;
+  --text-muted:           #8C7D76;
+  --text-inverse:         #1D1A19;
+
+  --border-default:       #3A3330;
+  --border-strong:        #5A4E48;
+  --border-signal:        #FF5B24;
+
+  --ring-signal:          0 0 0 2px rgba(255, 91, 36, 0.35);
+  --shadow-none:          none;
+  --shadow-signal:        var(--ring-signal);
+}
+
+/* ============================================================
+   TYPOGRAPHY TOKENS
+   (font-family values require fonts to be loaded by the project)
+   ============================================================ */
+:root {
+  --font-grotesk:   'Space Grotesk', sans-serif;
+  --font-poppins:   'Poppins', sans-serif;
+  --font-termina:   'Termina Test', sans-serif;
+  --font-mono:      'JetBrains Mono', monospace;
+
+  /* Type scale */
+  --text-2xl:  3rem;       /* 48px */
+  --text-xl:   2.25rem;    /* 36px */
+  --text-lg:   1.75rem;    /* 28px */
+  --text-md:   1.375rem;   /* 22px */
+  --text-sm:   1.125rem;   /* 18px */
+  --text-body: 1rem;       /* 16px */
+  --text-s:    0.875rem;   /* 14px */
+  --text-xs:   0.75rem;    /* 12px */
+  --text-mono: 0.9375rem;  /* 15px */
+  --text-mono-s: 0.8125rem;/* 13px */
+  --text-label: 0.8125rem; /* 13px */
+  --text-tag:  0.6875rem;  /* 11px */
+
+  /* Tracking */
+  --tracking-tight:  -0.01em;
+  --tracking-normal:  0;
+  --tracking-btn:     0.01em;
+  --tracking-label:   0.08em;
+  --tracking-meta:    0.12em;
+}
+
+/* ============================================================
+   SPACING TOKENS
+   ============================================================ */
+:root {
+  --space-1:   4px;
+  --space-2:   8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+}
+
+/* ============================================================
+   BORDER TOKENS
+   ============================================================ */
+:root {
+  --border-thin:    1px solid var(--border-default);
+  --border-base:    1.5px solid var(--border-default);
+  --border-heavy:   2px solid var(--border-default);
+  --border-active:  2px solid var(--border-signal);
+  --border-strong-rule: 1px solid var(--border-strong);
+  --border-dash:    1px dashed var(--border-default);
+
+  --radius-none:    0px;
+  --radius-sm:      2px;    /* toggle thumb only */
+  --radius-full:    9999px; /* toggle track only */
+}
+
+/* ============================================================
+   TRANSITION TOKENS
+   ============================================================ */
+:root {
+  --ease-default:  cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out:      cubic-bezier(0, 0, 0.2, 1);
+  --ease-sharp:    cubic-bezier(0.4, 0, 0.6, 1);
+
+  --dur-instant:   80ms;
+  --dur-fast:      150ms;
+  --dur-base:      200ms;
+  --dur-slow:      300ms;
+  --dur-crawl:     500ms;
+}
+
+/* ============================================================
+   LEGACY ALIASES
+   For backward compat with older MECH tools.
+   Use canonical tokens in new code.
+   ============================================================ */
+:root {
+  --cream:         #F9F2EE;
+  --charcoal:      #1D1A19;
+  --brand-orange:  #FF5B24;
+}
+
+/* ============================================================
+   BASE RESET (optional - comment out if project has its own)
+   ============================================================ */
+/* Uncomment to use:
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-poppins);
+  -webkit-font-smoothing: antialiased;
+}
+*/

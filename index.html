@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MECH Design System - ds.themech.studio</title>
+<meta name="description" content="The MECH Studio design system. Token reference, component patterns, and usage rules."/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Poppins:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   TOKENS (inline copy of tokens.css)
+   ============================================================ */
+:root, [data-theme="light"] {
+  --mech-orange:       #FF5B24;
+  --mech-dark:         #1D1A19;
+  --mech-paper:        #F9F2EE;
+  --mech-paper-s:      #F1E7E2;
+  --mech-ink-80:       #3A3330;
+  --mech-ink-50:       #8C7D76;
+  --mech-ink-20:       #D4C8C2;
+  --mech-green:        #2ECC71;
+  --mech-red:          #E74C3C;
+
+  --bg-base:           var(--mech-paper);
+  --bg-surface:        var(--mech-paper-s);
+  --text-primary:      var(--mech-dark);
+  --text-secondary:    var(--mech-ink-80);
+  --text-muted:        var(--mech-ink-50);
+  --text-inverse:      var(--mech-paper);
+  --border-col:        var(--mech-ink-20);
+  --border-strong-col: var(--mech-ink-80);
+
+  --sidebar-w: 220px;
+}
+
+[data-theme="dark"] {
+  --mech-orange:       #FF5B24;
+  --mech-dark:         #F1E7E2;
+  --mech-paper:        #1D1A19;
+  --mech-paper-s:      #252220;
+  --mech-ink-80:       #C4B8B2;
+  --mech-ink-50:       #8C7D76;
+  --mech-ink-20:       #3A3330;
+  --mech-green:        #2ECC71;
+  --mech-red:          #E74C3C;
+
+  --bg-base:           #1D1A19;
+  --bg-surface:        #252220;
+  --text-primary:      #F1E7E2;
+  --text-secondary:    #C4B8B2;
+  --text-muted:        #8C7D76;
+  --text-inverse:      #1D1A19;
+  --border-col:        #3A3330;
+  --border-strong-col: #5A4E48;
+}
+
+/* ============================================================
+   RESET + BASE
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  transition: background var(--dur-base) var(--ease-default), color var(--dur-base) var(--ease-default);
+}
+--ease-default: cubic-bezier(0.4, 0, 0.2, 1);
+--dur-base: 200ms;
+
+/* ============================================================
+   LAYOUT SHELL
+   ============================================================ */
+.shell { display: flex; min-height: 100vh; }
+
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+.sidebar {
+  width: 220px;
+  background: var(--bg-surface);
+  border-right: 1px solid var(--border-col);
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  overflow-y: auto;
+  transition: background 200ms ease, border-color 200ms ease;
+}
+
+.sb-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border-col);
+}
+.sb-mark {
+  width: 28px; height: 28px;
+  background: var(--text-primary);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: background 200ms ease;
+}
+.sb-mark span { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 11px; color: var(--bg-base); }
+.sb-name { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 12px; color: var(--text-primary); }
+.sb-ver { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--text-muted); display: block; }
+
+.sb-sec {
+  padding: 12px 14px 3px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; text-transform: uppercase; letter-spacing: .12em;
+  color: var(--text-muted); margin-top: 4px;
+}
+.sb-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 14px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 12px; color: var(--text-secondary);
+  cursor: pointer; border-left: 2px solid transparent;
+  transition: all 80ms ease;
+  text-decoration: none;
+}
+.sb-item:hover { color: var(--text-primary); background: var(--border-col); }
+.sb-item.active {
+  color: var(--text-primary); font-weight: 500;
+  border-left-color: var(--mech-orange);
+  background: var(--bg-base);
+}
+.sb-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--border-col); flex-shrink: 0; transition: background 80ms ease; }
+.sb-item.active .sb-dot { background: var(--mech-orange); }
+
+/* ============================================================
+   MOBILE NAV (hidden on desktop)
+   ============================================================ */
+.mobile-nav {
+  display: none;
+  position: sticky;
+  top: 48px;
+  z-index: 15;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-col);
+  overflow-x: auto;
+  white-space: nowrap;
+  padding: 8px 16px;
+  gap: 4px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.mobile-nav::-webkit-scrollbar { display: none; }
+.mob-pill {
+  display: inline-flex; align-items: center;
+  padding: 5px 12px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 11px; color: var(--text-secondary);
+  border: 1px solid var(--border-col);
+  cursor: pointer; white-space: nowrap;
+  transition: all 80ms ease;
+  text-decoration: none;
+  background: transparent;
+}
+.mob-pill:hover { border-color: var(--text-primary); color: var(--text-primary); }
+.mob-pill.active { border-color: var(--mech-orange); color: var(--mech-orange); background: rgba(255,91,36,.07); }
+
+/* ============================================================
+   MAIN
+   ============================================================ */
+.main { margin-left: 220px; min-width: 0; overflow-x: hidden; }
+
+/* ============================================================
+   TOPBAR
+   ============================================================ */
+.topbar {
+  height: 48px;
+  background: var(--bg-base);
+  border-bottom: 1px solid var(--border-col);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 32px;
+  position: sticky; top: 0; z-index: 5;
+  transition: background 200ms ease, border-color 200ms ease;
+}
+.tb-left { display: flex; align-items: center; gap: 16px; }
+.tb-wordmark { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 13px; color: var(--text-primary); }
+.tb-sub { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: .10em; }
+.tb-right { display: flex; align-items: center; gap: 12px; }
+
+/* THEME TOGGLE */
+.theme-toggle {
+  display: flex; align-items: center; gap: 8px;
+  cursor: pointer; padding: 6px 10px;
+  border: 1px solid var(--border-col);
+  background: transparent;
+  transition: border-color 80ms ease;
+}
+.theme-toggle:hover { border-color: var(--text-primary); }
+.theme-toggle span {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; text-transform: uppercase; letter-spacing: .08em;
+  color: var(--text-muted);
+}
+.theme-icon { font-size: 13px; }
+
+/* TOKEN LINK */
+.tb-token-link {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; text-transform: uppercase; letter-spacing: .08em;
+  color: var(--mech-orange);
+  text-decoration: underline; text-underline-offset: 2px;
+  text-decoration-color: var(--mech-orange);
+  cursor: pointer; background: transparent; border: none;
+  transition: opacity 80ms ease;
+}
+.tb-token-link:hover { opacity: .7; }
+
+/* ============================================================
+   CONTENT
+   ============================================================ */
+.content { padding: 48px 48px 96px; max-width: 1040px; }
+
+/* ============================================================
+   SECTIONS
+   ============================================================ */
+.section { margin-bottom: 72px; scroll-margin-top: 64px; }
+.sec-hd {
+  display: flex; align-items: baseline; gap: 14px;
+  padding-bottom: 14px; margin-bottom: 32px;
+  border-bottom: 2px solid var(--text-primary);
+  transition: border-color 200ms ease;
+}
+.sec-n { font-family: 'JetBrains Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: .12em; color: var(--mech-orange); flex-shrink: 0; }
+.sec-t { font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; letter-spacing: -.01em; }
+
+.sub { margin-bottom: 28px; }
+.sub-t {
+  font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .08em; color: var(--text-muted);
+  margin-bottom: 14px; display: flex; align-items: center; gap: 10px;
+}
+.sub-t::after { content: ''; flex: 1; height: 1px; background: var(--border-col); }
+
+/* ============================================================
+   COVER
+   ============================================================ */
+.cover {
+  background: #1D1A19;
+  padding: 56px 48px;
+  margin-bottom: 48px;
+  position: relative; overflow: hidden;
+}
+[data-theme="dark"] .cover { background: #252220; border: 1px solid #3A3330; }
+.cover::after {
+  content: '';
+  position: absolute; bottom: -60px; right: -60px;
+  width: 220px; height: 220px;
+  border: 1px solid rgba(255,91,36,.12); border-radius: 50%;
+}
+.cov-eye {
+  font-family: 'JetBrains Mono', monospace; font-size: 9px;
+  text-transform: uppercase; letter-spacing: .15em; color: var(--mech-orange);
+  margin-bottom: 18px; display: flex; align-items: center; gap: 10px;
+}
+.cov-eye::before { content: ''; width: 20px; height: 1px; background: var(--mech-orange); }
+.cov-h { font-family: 'Space Grotesk', sans-serif; font-size: 40px; font-weight: 700; color: #F9F2EE; line-height: 1.05; letter-spacing: -.02em; margin-bottom: 10px; }
+.cov-h em { color: var(--mech-orange); font-style: normal; }
+.cov-sub { font-family: 'Poppins', sans-serif; font-size: 13px; color: #8C7D76; max-width: 440px; margin-bottom: 28px; line-height: 1.6; }
+
+.cov-import {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 10px 14px;
+  border: 1px solid #3A3330;
+  background: rgba(255,255,255,.03);
+  margin-bottom: 24px;
+  cursor: pointer;
+  transition: border-color 80ms ease;
+}
+.cov-import:hover { border-color: var(--mech-orange); }
+.cov-import code { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--mech-orange); background: transparent; padding: 0; }
+.cov-import-copy { font-family: 'JetBrains Mono', monospace; font-size: 9px; text-transform: uppercase; letter-spacing: .10em; color: #8C7D76; flex-shrink: 0; cursor: pointer; transition: color 80ms ease; }
+.cov-import:hover .cov-import-copy { color: var(--mech-orange); }
+
+.cov-meta { display: flex; gap: 28px; flex-wrap: wrap; }
+.cm-i { display: flex; flex-direction: column; gap: 2px; }
+.cm-l { font-family: 'JetBrains Mono', monospace; font-size: 9px; text-transform: uppercase; letter-spacing: .10em; color: #8C7D76; }
+.cm-v { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #F9F2EE; }
+
+/* ============================================================
+   COLORS
+   ============================================================ */
+.swatch-grid { display: grid; gap: 10px; }
+.swatch { border: 1px solid var(--border-col); overflow: hidden; transition: border-color 200ms ease; }
+.sw-col { height: 52px; }
+.sw-info { padding: 8px; background: var(--bg-surface); transition: background 200ms ease; }
+.sw-name { font-family: 'JetBrains Mono', monospace; font-size: 8px; text-transform: uppercase; letter-spacing: .08em; color: var(--text-secondary); display: block; margin-bottom: 2px; }
+.sw-hex { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: var(--text-primary); display: block; }
+.sw-use { font-family: 'Poppins', sans-serif; font-size: 9px; color: var(--text-muted); display: block; margin-top: 3px; line-height: 1.4; }
+
+/* surface hierarchy strip */
+.surface-strip { display: flex; border: 1px solid var(--border-col); overflow: hidden; }
+.surf-cell { flex: 1; padding: 16px; border-right: 1px solid var(--border-col); }
+.surf-cell:last-child { border-right: none; }
+.surf-lbl { font-family: 'JetBrains Mono', monospace; font-size: 9px; text-transform: uppercase; letter-spacing: .10em; color: var(--mech-orange); display: block; margin-bottom: 4px; }
+.surf-hex { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-primary); display: block; }
+.surf-role { font-family: 'Poppins', sans-serif; font-size: 10px; color: var(--text-muted); display: block; margin-top: 3px; }
+
+/* dark mode preview strip */
+.dark-strip {
+  background: #1D1A19;
+  border: 1px solid #3A3330;
+  padding: 20px 24px;
+  display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
+}
+.dark-swatch { display: flex; flex-direction: column; gap: 4px; align-items: center; }
+.ds-col { width: 40px; height: 40px; border: 1px solid #3A3330; }
+.ds-lbl { font-family: 'JetBrains Mono', monospace; font-size: 8px; text-transform: uppercase; letter-spacing: .08em; color: #8C7D76; text-align: center; }
+
+/* alias table */
+.alias-tbl { width: 100%; border-collapse: collapse; border: 1px solid var(--border-col); }
+.alias-tbl th { padding: 8px 14px; font-family: 'Space Grotesk', sans-serif; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--text-primary); border-bottom: 2px solid var(--text-primary); background: var(--bg-surface); text-align: left; }
+.alias-tbl td { padding: 9px 14px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-secondary); border-bottom: 1px solid var(--border-col); }
+.alias-tbl td:first-child { color: var(--mech-orange); font-weight: 700; }
+.alias-tbl tr:last-child td { border-bottom: none; }
+
+/* ============================================================
+   TYPOGRAPHY
+   ============================================================ */
+.type-row { display: flex; align-items: baseline; gap: 20px; padding: 14px 0; border-bottom: 1px dashed var(--border-col); }
+.t-meta { flex-shrink: 0; width: 160px; }
+.t-tok { font-family: 'JetBrains Mono', monospace; font-size: 9px; text-transform: uppercase; letter-spacing: .08em; color: var(--mech-orange); display: block; margin-bottom: 2px; }
+.t-spec { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--text-muted); display: block; }
+.t-sample { flex: 1; color: var(--text-primary); }
+
+/* ============================================================
+   SPACING
+   ============================================================ */
+.sp-row { display: flex; align-items: center; gap: 14px; padding: 7px 0; border-bottom: 1px dashed var(--border-col); }
+.sp-l { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--mech-orange); width: 72px; flex-shrink: 0; }
+.sp-v { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); width: 36px; flex-shrink: 0; }
+.sp-b { height: 8px; background: var(--text-primary); transition: background 200ms ease; }
+
+/* ============================================================
+   DEMO BLOCKS
+   ============================================================ */
+.demo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.demo-block { background: var(--bg-surface); border: 1px solid var(--border-col); padding: 20px; transition: background 200ms ease, border-color 200ms ease; }
+.demo-lbl { font-family: 'JetBrains Mono', monospace; font-size: 9px; text-transform: uppercase; letter-spacing: .12em; color: var(--text-muted); display: block; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px dashed var(--border-col); }
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.btn { display: inline-flex; align-items: center; gap: 6px; font-family: 'Space Grotesk', sans-serif; font-weight: 500; font-size: 13px; border-radius: 0; cursor: pointer; border: 2px solid transparent; transition: all 80ms ease; padding: 9px 16px; line-height: 1; }
+.btn-primary { background: var(--text-primary); color: var(--bg-base); border-color: var(--text-primary); }
+.btn-primary:hover { opacity: .82; }
+.btn-signal { background: var(--mech-orange); color: #fff; border-color: var(--mech-orange); }
+.btn-signal:hover { opacity: .88; }
+.btn-sec { background: transparent; color: var(--text-primary); border: 1px solid var(--border-col); }
+.btn-sec:hover { border-color: var(--text-primary); background: var(--border-col); }
+.btn-ghost { background: transparent; color: var(--text-secondary); border: none; padding: 9px 10px; }
+.btn-ghost:hover { color: var(--text-primary); background: var(--border-col); }
+.btn-link { background: transparent; border: none; padding: 0; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 500; color: var(--text-primary); text-decoration: underline; text-underline-offset: 2px; text-decoration-color: var(--border-col); cursor: pointer; border-radius: 0; transition: all 80ms ease; }
+.btn-link:hover { color: var(--mech-orange); text-decoration-color: var(--mech-orange); }
+.btn-link-sig { background: transparent; border: none; padding: 0; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 500; color: var(--mech-orange); text-decoration: underline; text-underline-offset: 2px; text-decoration-color: var(--mech-orange); cursor: pointer; border-radius: 0; transition: opacity 80ms ease; }
+.btn-link-sig:hover { opacity: .7; }
+.btn-destruct { background: transparent; color: var(--mech-red); border: 1px solid var(--mech-red); }
+.btn-destruct:hover { background: var(--mech-red); color: #fff; }
+.btn-sm { padding: 6px 12px; font-size: 12px; }
+.btn-lg { padding: 12px 20px; font-size: 14px; }
+.btn-off { opacity: .38; cursor: not-allowed; pointer-events: none; }
+
+/* ============================================================
+   INPUTS
+   ============================================================ */
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field-label { font-family: 'Space Grotesk', sans-serif; font-weight: 500; font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--text-secondary); }
+.field-input { width: 100%; padding: 10px 12px; background: var(--bg-base); color: var(--text-primary); font-family: 'Poppins', sans-serif; font-size: 13px; border: 1px solid var(--border-col); border-radius: 0; outline: none; transition: border 75ms ease, background 200ms ease; }
+.field-input::placeholder { color: var(--text-muted); }
+.field-input:focus { border: 2px solid var(--mech-orange); }
+.field-input.err { border: 2px solid var(--mech-red); }
+.field-help { font-family: 'Poppins', sans-serif; font-size: 11px; color: var(--text-muted); }
+.field-help.err { color: var(--mech-red); }
+
+/* ============================================================
+   RADIO + CHECKBOX (square)
+   ============================================================ */
+.radio-group { display: flex; flex-direction: column; gap: 10px; }
+.radio-item { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+.radio-box { width: 16px; height: 16px; flex-shrink: 0; border: 1px solid var(--border-col); border-radius: 0; background: var(--bg-base); display: flex; align-items: center; justify-content: center; transition: border 80ms ease, background 200ms ease; }
+.radio-item:hover .radio-box { border-color: var(--text-primary); }
+.radio-item.on .radio-box { border: 2px solid var(--mech-orange); }
+.radio-inner { width: 8px; height: 8px; background: var(--mech-orange); border-radius: 0; opacity: 0; transform: scale(0); transition: all 150ms ease; }
+.radio-item.on .radio-inner { opacity: 1; transform: scale(1); }
+.radio-lbl { font-family: 'Space Grotesk', sans-serif; font-size: 13px; color: var(--text-secondary); }
+.radio-item.on .radio-lbl { color: var(--text-primary); }
+
+.check-row { display: flex; flex-direction: column; gap: 10px; }
+.check-item { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+.check-box { width: 16px; height: 16px; flex-shrink: 0; border-radius: 0; border: 1px solid var(--border-col); background: var(--bg-base); display: flex; align-items: center; justify-content: center; transition: all 80ms ease; position: relative; }
+.check-item:hover .check-box { border-color: var(--text-primary); }
+.check-item.on .check-box { background: var(--mech-orange); border-color: var(--mech-orange); }
+.check-mark { opacity: 0; transition: opacity 150ms ease; }
+.check-item.on .check-mark { opacity: 1; }
+.check-lbl { font-family: 'Space Grotesk', sans-serif; font-size: 13px; color: var(--text-secondary); }
+
+/* ============================================================
+   TOGGLE
+   ============================================================ */
+.tog-wrap { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+.tog { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
+.tog input { opacity: 0; width: 0; height: 0; position: absolute; }
+.tog-track {
+  position: absolute; inset: 0;
+  border-radius: 9999px;
+  border: 2px solid var(--border-col);
+  background: transparent;
+  transition: background 200ms ease, border-color 200ms ease;
+}
+.tog-thumb {
+  position: absolute; top: 3px; left: 3px;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: var(--text-muted);
+  transition: transform 200ms cubic-bezier(0.4,0,0.2,1), background 200ms ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+}
+.tog input:checked ~ .tog-track { background: var(--mech-orange); border-color: var(--mech-orange); }
+.tog input:checked ~ .tog-thumb { transform: translateX(20px); background: #fff; }
+.tog-wrap:hover .tog-track { border-color: var(--text-primary); }
+.tog input:checked ~ .tog-track:hover { border-color: var(--mech-orange); }
+.tog-lbl { font-family: 'Space Grotesk', sans-serif; font-size: 13px; color: var(--text-secondary); }
+/* custom toggle variant - segmented/physical style */
+.tog-physical { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+.tog-seg {
+  display: inline-flex; align-items: center;
+  width: 44px; height: 22px;
+  border: 1px solid var(--border-col);
+  background: var(--bg-base);
+  position: relative;
+  transition: border-color 80ms ease;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.tog-seg-thumb {
+  position: absolute; top: 4px; left: 4px;
+  width: 12px; height: 12px;
+  background: var(--border-col);
+  transition: transform 150ms cubic-bezier(0.4,0,0.2,1), background 150ms ease;
+}
+.tog-seg.on { border-color: var(--mech-orange); }
+.tog-seg.on .tog-seg-thumb { transform: translateX(20px); background: var(--mech-orange); }
+.tog-seg:hover { border-color: var(--text-primary); }
+.tog-seg.on:hover { border-color: var(--mech-orange); }
+.tog-seg-lbl { font-family: 'Space Grotesk', sans-serif; font-size: 13px; color: var(--text-secondary); }
+
+/* ============================================================
+   CARDS
+   ============================================================ */
+.card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.card { background: var(--bg-surface); border: 1px solid var(--border-col); padding: 20px; transition: border-color 80ms ease, background 200ms ease; cursor: default; }
+.card:hover { border-color: var(--border-strong-col); }
+.card.sel { border: 2px solid var(--mech-orange); }
+.card.base { background: var(--bg-base); }
+.card-t { font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px; }
+.card-b { font-family: 'Poppins', sans-serif; font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+
+.metric-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.m-card { background: var(--bg-surface); border: 1px solid var(--border-col); padding: 20px; transition: background 200ms ease; }
+.m-lbl { font-family: 'JetBrains Mono', monospace; font-size: 9px; text-transform: uppercase; letter-spacing: .12em; color: var(--text-muted); display: block; margin-bottom: 6px; }
+.m-val { font-family: 'JetBrains Mono', monospace; font-size: 28px; font-weight: 700; color: var(--text-primary); display: block; line-height: 1; }
+.m-sub { font-family: 'Poppins', sans-serif; font-size: 11px; color: var(--text-muted); display: block; margin-top: 6px; }
+.m-up { color: var(--mech-green); font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+.m-dn { color: var(--mech-red); font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+
+.panel { border: 1px solid var(--border-col); }
+.panel-hd { padding: 10px 16px; border-bottom: 1px solid var(--border-col); background: var(--bg-surface); }
+.panel-hdt { font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--text-primary); }
+.panel-bd { padding: 16px; background: var(--bg-base); }
+
+/* ============================================================
+   BADGES
+   ============================================================ */
+.badge-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.bdg { display: inline-flex; align-items: center; padding: 3px 8px; font-family: 'JetBrains Mono', monospace; font-size: 9px; text-transform: uppercase; letter-spacing: .08em; border-radius: 0; }
+.b-def { border: 1px solid var(--border-col); color: var(--text-secondary); }
+.b-sig { border: 1px solid var(--mech-orange); color: var(--mech-orange); background: rgba(255,91,36,.07); }
+.b-drk { background: var(--text-primary); color: var(--bg-base); }
+.b-ok  { border: 1px solid var(--mech-green); color: var(--mech-green); background: rgba(46,204,113,.07); }
+.b-err { border: 1px solid var(--mech-red); color: var(--mech-red); background: rgba(231,76,60,.07); }
+
+/* ============================================================
+   PROGRESS
+   ============================================================ */
+.prog-wrap { display: flex; flex-direction: column; gap: 6px; }
+.prog-hd { display: flex; justify-content: space-between; align-items: baseline; }
+.prog-title { font-family: 'JetBrains Mono', monospace; font-size: 9px; text-transform: uppercase; letter-spacing: .10em; color: var(--text-muted); }
+.prog-pct { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; color: var(--text-primary); }
+.prog-segs { display: flex; gap: 2px; height: 5px; }
+
+/* ============================================================
+   TABLE
+   ============================================================ */
+.ds-table { width: 100%; border-collapse: collapse; border: 1px solid var(--border-col); }
+.ds-table th { text-align: left; padding: 9px 14px; font-family: 'Space Grotesk', sans-serif; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--text-primary); border-bottom: 2px solid var(--text-primary); background: var(--bg-surface); }
+.ds-table td { padding: 11px 14px; font-family: 'Poppins', sans-serif; font-size: 13px; color: var(--text-secondary); border-bottom: 1px solid var(--border-col); }
+.ds-table tr:last-child td { border-bottom: none; }
+.ds-table tr:hover td { background: rgba(212,200,194,.15); }
+.ds-table td.mono { font-family: 'JetBrains Mono', monospace; font-size: 11px; text-align: right; color: var(--text-primary); }
+code { font-family: 'JetBrains Mono', monospace; font-size: 10px; background: var(--border-col); padding: 2px 5px; border-radius: 0; color: var(--mech-orange); }
+[data-theme="dark"] code { background: var(--mech-ink-20); }
+
+/* ============================================================
+   BREADCRUMB
+   ============================================================ */
+.bc { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.bc-i { font-family: 'JetBrains Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: .10em; color: var(--text-muted); }
+.bc-i.cur { color: var(--text-primary); font-weight: 500; }
+.bc-sep { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--border-col); }
+
+/* ============================================================
+   MOTION CHIPS
+   ============================================================ */
+.mc-row { display: flex; flex-wrap: wrap; gap: 10px; }
+.mc { padding: 10px 14px; background: var(--bg-surface); border: 1px solid var(--border-col); display: flex; flex-direction: column; gap: 2px; }
+.mc-n { font-family: 'JetBrains Mono', monospace; font-size: 9px; text-transform: uppercase; letter-spacing: .08em; color: var(--text-primary); }
+.mc-v { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--mech-orange); }
+
+/* ============================================================
+   DIVIDERS
+   ============================================================ */
+.div-stack { display: flex; flex-direction: column; gap: 16px; }
+.div-meta { font-family: 'JetBrains Mono', monospace; font-size: 8px; text-transform: uppercase; letter-spacing: .10em; color: var(--text-muted); display: block; margin-bottom: 6px; }
+.d-sol { border: none; border-top: 1px solid var(--border-strong-col); }
+.d-def { border: none; border-top: 1px solid var(--border-col); }
+.d-dsh { border: none; border-top: 1px dashed var(--border-col); }
+.d-lbl { display: flex; align-items: center; gap: 12px; }
+.d-lbl hr { flex: 1; border: none; border-top: 1px dashed var(--border-col); }
+.d-lbl span { font-family: 'JetBrains Mono', monospace; font-size: 8px; text-transform: uppercase; letter-spacing: .12em; color: var(--text-muted); white-space: nowrap; }
+
+/* ============================================================
+   USAGE RULES
+   ============================================================ */
+.rule-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.rule-card { background: var(--bg-surface); border: 1px solid var(--border-col); padding: 20px; border-left: 3px solid var(--mech-orange); transition: background 200ms ease; }
+.rule-card.warn { border-left-color: var(--mech-red); }
+.rule-card.ink  { border-left-color: var(--border-strong-col); }
+.rule-title { font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 12px; }
+.rule-list { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+.rule-list li { font-family: 'Poppins', sans-serif; font-size: 12px; color: var(--text-secondary); padding-left: 14px; position: relative; line-height: 1.5; }
+.rule-list li::before { content: '-'; position: absolute; left: 0; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--mech-orange); top: 2px; }
+.rule-list li.no::before { content: 'x'; color: var(--mech-red); }
+
+/* ============================================================
+   INFO BOX
+   ============================================================ */
+.info-box { padding: 12px 16px; border: 1px solid var(--border-col); border-left: 3px solid var(--mech-orange); background: var(--bg-surface); margin-top: 14px; }
+.info-tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; text-transform: uppercase; letter-spacing: .10em; color: var(--mech-orange); display: block; margin-bottom: 4px; }
+.info-txt { font-family: 'Poppins', sans-serif; font-size: 12px; color: var(--text-secondary); line-height: 1.6; }
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.ds-footer {
+  padding: 28px 48px;
+  border-top: 1px dashed var(--border-col);
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 12px;
+}
+.ft-l { font-family: 'JetBrains Mono', monospace; font-size: 9px; text-transform: uppercase; letter-spacing: .10em; color: var(--text-muted); }
+.ft-r { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--mech-orange); }
+
+/* ============================================================
+   COPY TOAST
+   ============================================================ */
+.toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+  background: var(--text-primary); color: var(--bg-base);
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  text-transform: uppercase; letter-spacing: .10em;
+  padding: 10px 20px;
+  opacity: 0;
+  transition: all 200ms ease;
+  pointer-events: none;
+  z-index: 999;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ============================================================
+   RESPONSIVE - MOBILE
+   ============================================================ */
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; }
+  .mobile-nav { display: flex; }
+  .topbar { padding: 0 16px; }
+  .tb-sub { display: none; }
+  .content { padding: 28px 16px 80px; }
+  .demo-grid { grid-template-columns: 1fr; }
+  .card-grid { grid-template-columns: 1fr; }
+  .metric-grid { grid-template-columns: 1fr 1fr; }
+  .swatch-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  .rule-grid { grid-template-columns: 1fr; }
+  .cover { padding: 32px 20px; }
+  .cov-h { font-size: 28px; }
+  .cov-sub { display: none; }
+  .cov-meta { gap: 16px; }
+  .surface-strip { flex-direction: column; }
+  .surf-cell { border-right: none; border-bottom: 1px solid var(--border-col); }
+  .surf-cell:last-child { border-bottom: none; }
+  .type-row { flex-direction: column; gap: 6px; }
+  .t-meta { width: 100%; }
+  .ds-footer { padding: 20px 16px; }
+  .tb-token-link { display: none; }
+  .sec-hd { padding-bottom: 10px; margin-bottom: 20px; }
+  .section { margin-bottom: 48px; }
+}
+
+@media (max-width: 480px) {
+  .metric-grid { grid-template-columns: 1fr; }
+  .mc-row { gap: 8px; }
+  .btn-row { gap: 6px; }
+}
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- SIDEBAR (desktop) -->
+  <aside class="sidebar">
+    <div class="sb-logo">
+      <div class="sb-mark"><span>M</span></div>
+      <div><div class="sb-name">MECH DS</div><span class="sb-ver">v2.0.0</span></div>
+    </div>
+    <div class="sb-sec">Foundation</div>
+    <div class="sb-item active" onclick="go('colors',this)"><span class="sb-dot"></span>Colors</div>
+    <div class="sb-item" onclick="go('type',this)"><span class="sb-dot"></span>Typography</div>
+    <div class="sb-item" onclick="go('spacing',this)"><span class="sb-dot"></span>Spacing</div>
+    <div class="sb-item" onclick="go('border',this)"><span class="sb-dot"></span>Borders</div>
+    <div class="sb-item" onclick="go('shadow',this)"><span class="sb-dot"></span>Shadows</div>
+    <div class="sb-sec">Components</div>
+    <div class="sb-item" onclick="go('buttons',this)"><span class="sb-dot"></span>Buttons</div>
+    <div class="sb-item" onclick="go('inputs',this)"><span class="sb-dot"></span>Inputs</div>
+    <div class="sb-item" onclick="go('radio',this)"><span class="sb-dot"></span>Radio & Checkbox</div>
+    <div class="sb-item" onclick="go('cards',this)"><span class="sb-dot"></span>Cards</div>
+    <div class="sb-item" onclick="go('badges',this)"><span class="sb-dot"></span>Badges</div>
+    <div class="sb-item" onclick="go('data',this)"><span class="sb-dot"></span>Data Display</div>
+    <div class="sb-item" onclick="go('nav',this)"><span class="sb-dot"></span>Navigation</div>
+    <div class="sb-item" onclick="go('dividers',this)"><span class="sb-dot"></span>Dividers</div>
+    <div class="sb-sec">System</div>
+    <div class="sb-item" onclick="go('motion',this)"><span class="sb-dot"></span>Motion</div>
+    <div class="sb-item" onclick="go('rules',this)"><span class="sb-dot"></span>Usage Rules</div>
+    <div class="sb-sec" style="margin-top:auto">Tokens</div>
+    <div class="sb-item" onclick="copyToken()"><span class="sb-dot" style="background:var(--mech-orange)"></span>Copy import</div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="tb-left">
+        <span class="tb-wordmark">ds.themech.studio</span>
+        <span class="tb-sub">Design System v2.0.0</span>
+      </div>
+      <div class="tb-right">
+        <button class="tb-token-link" onclick="copyToken()">Copy tokens.css import</button>
+        <button class="tb-token-link" onclick="downloadMD()">Download DS.md</button>
+        <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">
+          <span class="theme-icon" id="themeIcon">○</span>
+          <span id="themeLabel">Light</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- MOBILE NAV -->
+    <div class="mobile-nav" id="mobileNav">
+      <div class="mob-pill active" onclick="goMob('colors',this)">Colors</div>
+      <div class="mob-pill" onclick="goMob('type',this)">Type</div>
+      <div class="mob-pill" onclick="goMob('spacing',this)">Space</div>
+      <div class="mob-pill" onclick="goMob('border',this)">Border</div>
+      <div class="mob-pill" onclick="goMob('buttons',this)">Buttons</div>
+      <div class="mob-pill" onclick="goMob('inputs',this)">Inputs</div>
+      <div class="mob-pill" onclick="goMob('radio',this)">Radio</div>
+      <div class="mob-pill" onclick="goMob('cards',this)">Cards</div>
+      <div class="mob-pill" onclick="goMob('badges',this)">Badges</div>
+      <div class="mob-pill" onclick="goMob('data',this)">Data</div>
+      <div class="mob-pill" onclick="goMob('motion',this)">Motion</div>
+      <div class="mob-pill" onclick="goMob('rules',this)">Rules</div>
+    </div>
+
+    <div class="content">
+
+      <!-- COVER -->
+      <div class="cover">
+        <div class="cov-eye">The MECH Studio</div>
+        <div class="cov-h">MECH<br><em>Design</em><br>System</div>
+        <div class="cov-sub">Scifi precision meets old-paper warmth. Square corners. Flat surfaces. Orange is a signal, not decoration. Import once, use everywhere.</div>
+        <div class="cov-import" onclick="copyToken()" title="Click to copy">
+          <code>&lt;link rel="stylesheet" href="https://ds.themech.studio/tokens.css"&gt;</code>
+          <span class="cov-import-copy">Copy</span>
+        </div>
+        <div class="cov-meta">
+          <div class="cm-i"><span class="cm-l">Version</span><span class="cm-v">2.0.0</span></div>
+          <div class="cm-i"><span class="cm-l">Updated</span><span class="cm-v">2026-07-05</span></div>
+          <div class="cm-i"><span class="cm-l">Stack</span><span class="cm-v">Portable HTML/CSS</span></div>
+          <div class="cm-i"><span class="cm-l">Themes</span><span class="cm-v">Light + Dark</span></div>
+          <div class="cm-i"><span class="cm-l">Geometry</span><span class="cm-v">radius:0 default</span></div>
+        </div>
+      </div>
+
+      <!-- 01 COLORS -->
+      <div class="section" id="colors">
+        <div class="sec-hd"><span class="sec-n">01</span><h2 class="sec-t">Color Tokens</h2></div>
+
+        <div class="sub"><div class="sub-t">Core Palette</div>
+          <div class="swatch-grid" style="grid-template-columns:repeat(4,1fr)">
+            <div class="swatch"><div class="sw-col" style="background:#FF5B24"></div><div class="sw-info"><span class="sw-name">mech-orange</span><span class="sw-hex">#FF5B24</span><span class="sw-use">Signal - CTA, active, data</span></div></div>
+            <div class="swatch"><div class="sw-col" style="background:#1D1A19"></div><div class="sw-info"><span class="sw-name">mech-dark</span><span class="sw-hex">#1D1A19</span><span class="sw-use">Text, headings, dark fills</span></div></div>
+            <div class="swatch"><div class="sw-col" style="background:#F9F2EE;border-bottom:1px solid #D4C8C2"></div><div class="sw-info"><span class="sw-name">mech-paper</span><span class="sw-hex">#F9F2EE</span><span class="sw-use">Base bg - lighter cream</span></div></div>
+            <div class="swatch"><div class="sw-col" style="background:#F1E7E2;border-bottom:1px solid #D4C8C2"></div><div class="sw-info"><span class="sw-name">mech-paper-s</span><span class="sw-hex">#F1E7E2</span><span class="sw-use">Cards, sidebar - warmer</span></div></div>
+          </div>
+        </div>
+
+        <div class="sub"><div class="sub-t">Ink Scale</div>
+          <div class="swatch-grid" style="grid-template-columns:repeat(3,1fr)">
+            <div class="swatch"><div class="sw-col" style="background:#3A3330"></div><div class="sw-info"><span class="sw-name">ink-80</span><span class="sw-hex">#3A3330</span><span class="sw-use">Secondary text</span></div></div>
+            <div class="swatch"><div class="sw-col" style="background:#8C7D76"></div><div class="sw-info"><span class="sw-name">ink-50</span><span class="sw-hex">#8C7D76</span><span class="sw-use">Placeholder, disabled</span></div></div>
+            <div class="swatch"><div class="sw-col" style="background:#D4C8C2"></div><div class="sw-info"><span class="sw-name">ink-20</span><span class="sw-hex">#D4C8C2</span><span class="sw-use">Borders, dividers</span></div></div>
+          </div>
+        </div>
+
+        <div class="sub"><div class="sub-t">Semantic</div>
+          <div class="swatch-grid" style="grid-template-columns:repeat(2,1fr)">
+            <div class="swatch"><div class="sw-col" style="background:#2ECC71"></div><div class="sw-info"><span class="sw-name">signal-green</span><span class="sw-hex">#2ECC71</span><span class="sw-use">Success states</span></div></div>
+            <div class="swatch"><div class="sw-col" style="background:#E74C3C"></div><div class="sw-info"><span class="sw-name">signal-red</span><span class="sw-hex">#E74C3C</span><span class="sw-use">Error, destructive</span></div></div>
+          </div>
+        </div>
+
+        <div class="sub"><div class="sub-t">Surface Hierarchy (light)</div>
+          <div class="surface-strip">
+            <div class="surf-cell" style="background:#F9F2EE">
+              <span class="surf-lbl">mech-paper</span>
+              <span class="surf-hex">#F9F2EE</span>
+              <span class="surf-role">Page background</span>
+            </div>
+            <div class="surf-cell" style="background:#F1E7E2">
+              <span class="surf-lbl" style="color:#8C7D76">mech-paper-s</span>
+              <span class="surf-hex" style="color:#1D1A19">#F1E7E2</span>
+              <span class="surf-role" style="color:#8C7D76">Cards, sidebar</span>
+            </div>
+            <div class="surf-cell" style="background:#1D1A19">
+              <span class="surf-lbl">mech-dark</span>
+              <span class="surf-hex" style="color:#F9F2EE">#1D1A19</span>
+              <span class="surf-role">Fills, text</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="sub"><div class="sub-t">Dark Mode Tokens</div>
+          <div class="dark-strip">
+            <div class="dark-swatch"><div class="ds-col" style="background:#1D1A19;border-color:#3A3330"></div><span class="ds-lbl">paper<br>#1D1A19</span></div>
+            <div class="dark-swatch"><div class="ds-col" style="background:#252220;border-color:#3A3330"></div><span class="ds-lbl">paper-s<br>#252220</span></div>
+            <div class="dark-swatch"><div class="ds-col" style="background:#F1E7E2"></div><span class="ds-lbl">dark<br>#F1E7E2</span></div>
+            <div class="dark-swatch"><div class="ds-col" style="background:#C4B8B2"></div><span class="ds-lbl">ink-80<br>#C4B8B2</span></div>
+            <div class="dark-swatch"><div class="ds-col" style="background:#3A3330;border-color:#5A4E48"></div><span class="ds-lbl">ink-20<br>#3A3330</span></div>
+            <div class="dark-swatch"><div class="ds-col" style="background:#FF5B24"></div><span class="ds-lbl">orange<br>unchanged</span></div>
+            <span style="font-family:'Poppins',sans-serif;font-size:11px;color:#8C7D76;margin-left:8px;line-height:1.5">Orange is the same in both modes.<br>Toggle above to see dark mode live.</span>
+          </div>
+        </div>
+
+        <div class="sub"><div class="sub-t">Legacy Aliases</div>
+          <table class="alias-tbl" style="max-width:520px">
+            <thead><tr><th>Alias</th><th>Maps To</th><th>Hex</th></tr></thead>
+            <tbody>
+              <tr><td>cream</td><td>mech-paper</td><td>#F9F2EE</td></tr>
+              <tr><td>charcoal</td><td>mech-dark</td><td>#1D1A19</td></tr>
+              <tr><td>brand.orange</td><td>mech-orange</td><td>#FF5B24</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 02 TYPOGRAPHY -->
+      <div class="section" id="type">
+        <div class="sec-hd"><span class="sec-n">02</span><h2 class="sec-t">Typography</h2></div>
+        <div class="sub"><div class="sub-t">Space Grotesk - UI, Buttons, Labels, Nav</div>
+          <div class="type-row"><div class="t-meta"><span class="t-tok">display-2xl</span><span class="t-spec">48px - 700</span></div><div class="t-sample" style="font-family:'Space Grotesk';font-size:48px;font-weight:700;letter-spacing:-.02em;line-height:1.05">Build.</div></div>
+          <div class="type-row"><div class="t-meta"><span class="t-tok">display-xl</span><span class="t-spec">36px - 700</span></div><div class="t-sample" style="font-family:'Space Grotesk';font-size:36px;font-weight:700;line-height:1.1">Page Heading</div></div>
+          <div class="type-row"><div class="t-meta"><span class="t-tok">display-lg</span><span class="t-spec">28px - 600</span></div><div class="t-sample" style="font-family:'Space Grotesk';font-size:28px;font-weight:600">Section Title</div></div>
+          <div class="type-row"><div class="t-meta"><span class="t-tok">display-md</span><span class="t-spec">22px - 600</span></div><div class="t-sample" style="font-family:'Space Grotesk';font-size:22px;font-weight:600">Card Title</div></div>
+          <div class="type-row"><div class="t-meta"><span class="t-tok">label / btn</span><span class="t-spec">13px - 500 - 0.01em</span></div><div class="t-sample" style="font-family:'Space Grotesk';font-size:13px;font-weight:500;letter-spacing:.01em;color:var(--text-secondary)">Form Label - Button Text - Nav Item</div></div>
+        </div>
+        <div class="sub"><div class="sub-t">Poppins - Body & Descriptions</div>
+          <div class="type-row"><div class="t-meta"><span class="t-tok">body-lg</span><span class="t-spec">16px - 400 - 1.6lh</span></div><div class="t-sample" style="font-family:'Poppins';font-size:16px;color:var(--text-secondary)">Primary body text. Warm and readable at length on paper.</div></div>
+          <div class="type-row"><div class="t-meta"><span class="t-tok">body-md</span><span class="t-spec">14px - 400 - 1.6lh</span></div><div class="t-sample" style="font-family:'Poppins';font-size:14px;color:var(--text-secondary)">Secondary body - descriptions, sidebar content.</div></div>
+          <div class="type-row"><div class="t-meta"><span class="t-tok">body-sm</span><span class="t-spec">12px - 400 - 1.5lh</span></div><div class="t-sample" style="font-family:'Poppins';font-size:12px;color:var(--text-muted)">Caption and helper text at minimum size.</div></div>
+        </div>
+        <div class="sub"><div class="sub-t">JetBrains Mono - All Numbers & Data</div>
+          <div class="type-row"><div class="t-meta"><span class="t-tok">mono-lg</span><span class="t-spec">15px - 400</span></div><div class="t-sample" style="font-family:'JetBrains Mono';font-size:15px">MECH-0042 - 1,248 tasks - 99.4% - 2026-07-05</div></div>
+          <div class="type-row"><div class="t-meta"><span class="t-tok">mono-sm / meta</span><span class="t-spec">11px - 0.12em</span></div><div class="t-sample" style="font-family:'JetBrains Mono';font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted)">MECH - STUDIO - DS - v2.0.0</div></div>
+        </div>
+      </div>
+
+      <!-- 03 SPACING -->
+      <div class="section" id="spacing">
+        <div class="sec-hd"><span class="sec-n">03</span><h2 class="sec-t">Spacing Scale</h2></div>
+        <div class="sp-row"><span class="sp-l">space-1</span><span class="sp-v">4px</span><div class="sp-b" style="width:4px"></div></div>
+        <div class="sp-row"><span class="sp-l">space-2</span><span class="sp-v">8px</span><div class="sp-b" style="width:8px"></div></div>
+        <div class="sp-row"><span class="sp-l">space-3</span><span class="sp-v">12px</span><div class="sp-b" style="width:12px"></div></div>
+        <div class="sp-row"><span class="sp-l">space-4</span><span class="sp-v">16px</span><div class="sp-b" style="width:16px"></div></div>
+        <div class="sp-row"><span class="sp-l">space-5</span><span class="sp-v">20px</span><div class="sp-b" style="width:20px"></div></div>
+        <div class="sp-row"><span class="sp-l">space-6</span><span class="sp-v">24px</span><div class="sp-b" style="width:24px"></div></div>
+        <div class="sp-row"><span class="sp-l">space-8</span><span class="sp-v">32px</span><div class="sp-b" style="width:32px;background:var(--mech-orange)"></div></div>
+        <div class="sp-row"><span class="sp-l">space-10</span><span class="sp-v">40px</span><div class="sp-b" style="width:40px;background:var(--mech-orange)"></div></div>
+        <div class="sp-row"><span class="sp-l">space-12</span><span class="sp-v">48px</span><div class="sp-b" style="width:48px;background:var(--mech-orange)"></div></div>
+        <div class="sp-row"><span class="sp-l">space-16</span><span class="sp-v">64px</span><div class="sp-b" style="width:64px;background:var(--text-muted)"></div></div>
+        <div class="sp-row"><span class="sp-l">space-20</span><span class="sp-v">80px</span><div class="sp-b" style="width:80px;background:var(--text-muted)"></div></div>
+      </div>
+
+      <!-- 04 BORDERS -->
+      <div class="section" id="border">
+        <div class="sec-hd"><span class="sec-n">04</span><h2 class="sec-t">Borders & Radius</h2></div>
+        <div class="sub"><div class="sub-t">Sharp geometry - radius:0 everywhere</div>
+          <div style="display:flex;gap:16px;align-items:flex-end;flex-wrap:wrap">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+              <div style="width:60px;height:60px;background:var(--text-primary);border-radius:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px"><span style="font-family:'JetBrains Mono';font-size:8px;color:var(--bg-base);text-transform:uppercase">none</span><span style="font-family:'JetBrains Mono';font-size:9px;color:var(--mech-orange)">0px</span></div>
+              <span style="font-family:'JetBrains Mono';font-size:8px;color:var(--mech-orange);text-transform:uppercase;letter-spacing:.08em">DEFAULT</span>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+              <div style="width:60px;height:60px;background:var(--text-primary);border-radius:2px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px"><span style="font-family:'JetBrains Mono';font-size:8px;color:var(--bg-base);text-transform:uppercase">sm</span><span style="font-family:'JetBrains Mono';font-size:9px;color:var(--mech-orange)">2px</span></div>
+              <span style="font-family:'JetBrains Mono';font-size:8px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em">thumb only</span>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+              <div style="width:60px;height:60px;background:var(--text-primary);border-radius:9999px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px"><span style="font-family:'JetBrains Mono';font-size:8px;color:var(--bg-base);text-transform:uppercase">full</span><span style="font-family:'JetBrains Mono';font-size:9px;color:var(--mech-orange)">9999px</span></div>
+              <span style="font-family:'JetBrains Mono';font-size:8px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em">track only</span>
+            </div>
+          </div>
+        </div>
+        <div class="sub"><div class="sub-t">Border weights</div>
+          <div style="display:flex;flex-direction:column;gap:10px;max-width:500px">
+            <div style="padding:10px 14px;font-family:'JetBrains Mono';font-size:10px;color:var(--text-secondary);border:1px solid var(--border-col)">1px solid ink-20 - default</div>
+            <div style="padding:10px 14px;font-family:'JetBrains Mono';font-size:10px;color:var(--text-secondary);border:1px solid var(--border-strong-col)">1px solid ink-80 - strong / table headers</div>
+            <div style="padding:10px 14px;font-family:'JetBrains Mono';font-size:10px;color:var(--mech-orange);border:2px solid var(--mech-orange)">2px solid mech-orange - active / focused</div>
+            <div style="padding:10px 14px;font-family:'JetBrains Mono';font-size:10px;color:var(--text-muted);border:1px dashed var(--border-col)">1px dashed ink-20 - section separators</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 05 SHADOWS -->
+      <div class="section" id="shadow">
+        <div class="sec-hd"><span class="sec-n">05</span><h2 class="sec-t">Shadows - Flat System</h2></div>
+        <div class="demo-grid" style="max-width:560px">
+          <div class="demo-block"><span class="demo-lbl">Default - shadow:none</span><div style="width:52px;height:52px;background:var(--bg-surface);border:1px solid var(--border-col)"></div></div>
+          <div class="demo-block"><span class="demo-lbl">Signal - focus ring only</span><div style="width:52px;height:52px;background:var(--bg-surface);border:2px solid var(--mech-orange);box-shadow:0 0 0 2px rgba(255,91,36,.30)"></div></div>
+        </div>
+        <div class="info-box"><span class="info-tag">Rule</span><span class="info-txt">No drop shadows. No elevation. box-shadow permitted only as the focus ring: <code>0 0 0 2px rgba(255,91,36,0.30)</code>. All depth = border + bg contrast.</span></div>
+      </div>
+
+      <!-- 06 BUTTONS -->
+      <div class="section" id="buttons">
+        <div class="sec-hd"><span class="sec-n">06</span><h2 class="sec-t">Buttons</h2></div>
+        <div class="demo-grid">
+          <div class="demo-block"><span class="demo-lbl">Variants - square, Space Grotesk</span><div class="btn-row"><button class="btn btn-primary">Primary</button><button class="btn btn-signal">Signal CTA</button><button class="btn btn-sec">Secondary</button><button class="btn btn-ghost">Ghost</button></div></div>
+          <div class="demo-block"><span class="demo-lbl">Link buttons - underlined, no border</span><div style="display:flex;flex-direction:column;gap:12px;align-items:flex-start"><button class="btn-link">Link Action</button><button class="btn-link-sig">Signal Link</button><span style="font-family:'Poppins';font-size:11px;color:var(--text-muted)">Use inside tables, card footers, "View all"</span></div></div>
+          <div class="demo-block"><span class="demo-lbl">Sizes</span><div class="btn-row"><button class="btn btn-primary btn-lg">Large</button><button class="btn btn-primary">Default</button><button class="btn btn-primary btn-sm">Small</button></div></div>
+          <div class="demo-block"><span class="demo-lbl">Destructive & disabled</span><div class="btn-row"><button class="btn btn-destruct">Delete</button><button class="btn btn-primary btn-off">Disabled</button></div></div>
+        </div>
+      </div>
+
+      <!-- 07 INPUTS -->
+      <div class="section" id="inputs">
+        <div class="sec-hd"><span class="sec-n">07</span><h2 class="sec-t">Inputs</h2></div>
+        <div class="demo-grid">
+          <div class="demo-block"><span class="demo-lbl">Default</span><div class="field"><label class="field-label">Project Name</label><input class="field-input" type="text" placeholder="Enter project name"/><span class="field-help">Used across all MECH tools</span></div></div>
+          <div class="demo-block"><span class="demo-lbl">Focus - 2px orange</span><div class="field"><label class="field-label">Task ID</label><input class="field-input" type="text" value="MECH-0042" style="border:2px solid var(--mech-orange)"/><span class="field-help" style="color:var(--mech-orange)">Orange on focus</span></div></div>
+          <div class="demo-block"><span class="demo-lbl">Error state</span><div class="field"><label class="field-label">Deadline</label><input class="field-input err" type="text" value="not-a-date"/><span class="field-help err">Invalid date format</span></div></div>
+          <div class="demo-block"><span class="demo-lbl">Select</span><div class="field"><label class="field-label">Status</label><select class="field-input" style="cursor:pointer;font-family:'Space Grotesk'"><option>Active</option><option>Closed</option><option>Archived</option></select></div></div>
+        </div>
+      </div>
+
+      <!-- 08 RADIO + CHECKBOX -->
+      <div class="section" id="radio">
+        <div class="sec-hd"><span class="sec-n">08</span><h2 class="sec-t">Radio & Checkbox</h2></div>
+        <div class="demo-grid">
+          <div class="demo-block"><span class="demo-lbl">Square radio - click to select</span><div class="radio-group" id="rg"><div class="radio-item" onclick="selR(this)"><div class="radio-box"><div class="radio-inner"></div></div><span class="radio-lbl">Low</span></div><div class="radio-item on" onclick="selR(this)"><div class="radio-box"><div class="radio-inner"></div></div><span class="radio-lbl">Medium</span></div><div class="radio-item" onclick="selR(this)"><div class="radio-box"><div class="radio-inner"></div></div><span class="radio-lbl">High</span></div></div></div>
+          <div class="demo-block"><span class="demo-lbl">Square checkbox - click to toggle</span><div class="check-row"><div class="check-item on" onclick="togC(this)"><div class="check-box"><svg class="check-mark" width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 3.5L3.5 6L9 1" stroke="#ffffff" stroke-width="1.5" stroke-linecap="square"/></svg></div><span class="check-lbl">System stability</span></div><div class="check-item on" onclick="togC(this)"><div class="check-box"><svg class="check-mark" width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 3.5L3.5 6L9 1" stroke="#ffffff" stroke-width="1.5" stroke-linecap="square"/></svg></div><span class="check-lbl">Collaboration layer</span></div><div class="check-item" onclick="togC(this)"><div class="check-box"><svg class="check-mark" width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 3.5L3.5 6L9 1" stroke="#ffffff" stroke-width="1.5" stroke-linecap="square"/></svg></div><span class="check-lbl">Security compliance</span></div></div></div>
+          <div class="demo-block" style="grid-column:1/-1"><span class="demo-lbl">Toggles - pill (standard) and square physical (MECH custom)</span>
+            <div style="display:flex;gap:48px;flex-wrap:wrap">
+              <div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.10em;color:var(--text-muted);margin-bottom:12px">PILL TOGGLE</div>
+                <div style="display:flex;flex-direction:column;gap:14px">
+                  <div class="tog-wrap"><label class="tog"><input type="checkbox" checked/><div class="tog-track"></div><div class="tog-thumb"></div></label><span class="tog-lbl">Auto-save enabled</span></div>
+                  <div class="tog-wrap"><label class="tog"><input type="checkbox"/><div class="tog-track"></div><div class="tog-thumb"></div></label><span class="tog-lbl" style="color:var(--text-muted)">Notifications off</span></div>
+                </div>
+              </div>
+              <div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.10em;color:var(--text-muted);margin-bottom:12px">SQUARE PHYSICAL TOGGLE (MECH)</div>
+                <div style="display:flex;flex-direction:column;gap:14px">
+                  <div class="tog-physical"><div class="tog-seg on" onclick="this.classList.toggle('on')"><div class="tog-seg-thumb"></div></div><span class="tog-seg-lbl">Dark mode</span></div>
+                  <div class="tog-physical"><div class="tog-seg" onclick="this.classList.toggle('on')"><div class="tog-seg-thumb"></div></div><span class="tog-seg-lbl" style="color:var(--text-muted)">Compact view</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="demo-block"><span class="demo-lbl">Geometry</span><div style="display:flex;gap:20px;align-items:center"><div style="display:flex;flex-direction:column;align-items:center;gap:6px"><div style="width:16px;height:16px;border:2px solid var(--mech-orange);display:flex;align-items:center;justify-content:center"><div style="width:8px;height:8px;background:var(--mech-orange);border-radius:0"></div></div><span style="font-family:'JetBrains Mono';font-size:8px;color:var(--text-muted);text-transform:uppercase">radio</span></div><div style="display:flex;flex-direction:column;align-items:center;gap:6px"><div style="width:16px;height:16px;background:var(--text-primary);display:flex;align-items:center;justify-content:center"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 3.5L3.5 6L9 1" stroke="#ffffff" stroke-width="1.5" stroke-linecap="square"/></svg></div><span style="font-family:'JetBrains Mono';font-size:8px;color:var(--text-muted);text-transform:uppercase">check</span></div><span style="font-family:'Poppins';font-size:11px;color:var(--text-secondary);line-height:1.5;flex:1">16x16px square. Square inner fill. Square linecap checkmark.</span></div></div>
+        </div>
+      </div>
+
+      <!-- 09 CARDS -->
+      <div class="section" id="cards">
+        <div class="sec-hd"><span class="sec-n">09</span><h2 class="sec-t">Cards</h2></div>
+        <div class="sub"><div class="sub-t">Content cards</div>
+          <div class="card-grid"><div class="card"><div class="card-t">Default</div><div class="card-b">Border darkens on hover. No shadow, no lift.</div></div><div class="card sel"><div class="card-t" style="color:var(--mech-orange)">Active</div><div class="card-b">2px orange border. No glow.</div></div><div class="card base"><div class="card-t">Base surface</div><div class="card-b">mech-paper fill for nested contexts.</div></div></div>
+        </div>
+        <div class="sub"><div class="sub-t">Metric cards</div>
+          <div class="metric-grid"><div class="m-card"><span class="m-lbl">Tasks Complete</span><span class="m-val">247</span><span class="m-sub"><span class="m-up">+12%</span> this sprint</span></div><div class="m-card"><span class="m-lbl">Build Time</span><span class="m-val">4.2s</span><span class="m-sub"><span class="m-dn">-0.8s</span> vs last</span></div><div class="m-card"><span class="m-lbl">Coverage</span><span class="m-val">91%</span><span class="m-sub">38 modules</span></div></div>
+        </div>
+        <div class="sub"><div class="sub-t">Panel card</div>
+          <div class="panel" style="max-width:380px"><div class="panel-hd"><span class="panel-hdt">Panel Title</span></div><div class="panel-bd"><span style="font-family:'Poppins';font-size:13px;color:var(--text-secondary)">Header uses surface bg + border-bottom. Body uses base.</span></div></div>
+        </div>
+      </div>
+
+      <!-- 10 BADGES -->
+      <div class="section" id="badges">
+        <div class="sec-hd"><span class="sec-n">10</span><h2 class="sec-t">Badges</h2></div>
+        <div class="demo-block" style="max-width:560px"><span class="demo-lbl">All variants - square, mono, uppercase</span>
+          <div class="badge-row" style="margin-bottom:10px"><span class="bdg b-def">DEFAULT</span><span class="bdg b-sig">ACTIVE</span><span class="bdg b-drk">CLOSED</span><span class="bdg b-ok">COMPLETE</span><span class="bdg b-err">FAILED</span></div>
+          <div class="badge-row"><span class="bdg b-def">IN PROGRESS</span><span class="bdg b-def">BACKLOG</span><span class="bdg b-sig">SHIPPING</span><span class="bdg b-drk">ARCHIVED</span></div>
+        </div>
+      </div>
+
+      <!-- 11 DATA DISPLAY -->
+      <div class="section" id="data">
+        <div class="sec-hd"><span class="sec-n">11</span><h2 class="sec-t">Data Display</h2></div>
+        <div class="sub"><div class="sub-t">Progress bars - square segments</div>
+          <div style="display:flex;flex-direction:column;gap:20px;max-width:480px">
+            <div class="prog-wrap"><div class="prog-hd"><span class="prog-title">SPRINT PROGRESS</span><span class="prog-pct">73%</span></div><div class="prog-segs" id="bar1"></div></div>
+            <div class="prog-wrap"><div class="prog-hd"><span class="prog-title">CREDITS USED</span><span class="prog-pct">56.4M / 100M</span></div><div class="prog-segs" id="bar2"></div></div>
+            <div class="prog-wrap"><div class="prog-hd"><span class="prog-title">COVERAGE</span><span class="prog-pct">91%</span></div><div class="prog-segs" id="bar3"></div></div>
+          </div>
+        </div>
+        <div class="sub"><div class="sub-t">Table</div>
+          <table class="ds-table">
+            <thead><tr><th>Ref</th><th>Task</th><th>Status</th><th>Assignee</th><th style="text-align:right">Credits</th></tr></thead>
+            <tbody>
+              <tr><td><code>MECH-001</code></td><td>DS v2.0 tokens</td><td><span class="bdg b-ok">COMPLETE</span></td><td style="font-family:'Poppins'">Ajai</td><td class="mono">2,400</td></tr>
+              <tr><td><code>MECH-002</code></td><td>Studio CRM schema</td><td><span class="bdg b-sig">ACTIVE</span></td><td style="font-family:'Poppins'">Ajai</td><td class="mono">8,100</td></tr>
+              <tr><td><code>MECH-003</code></td><td>Investor demo build</td><td><span class="bdg b-def">BACKLOG</span></td><td style="font-family:'Poppins'">-</td><td class="mono">-</td></tr>
+              <tr><td><code>MECH-004</code></td><td>FANTOM coin system</td><td><span class="bdg b-def">PENDING</span></td><td style="font-family:'Poppins'">Vithuran</td><td class="mono">3,750</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="sub"><div class="sub-t">Breadcrumb</div>
+          <div class="bc"><span class="bc-i">MECH</span><span class="bc-sep">-&gt;</span><span class="bc-i">STUDIO</span><span class="bc-sep">-&gt;</span><span class="bc-i">DS</span><span class="bc-sep">-&gt;</span><span class="bc-i cur">v2.0.0</span></div>
+        </div>
+      </div>
+
+      <!-- 12 NAVIGATION -->
+      <div class="section" id="nav">
+        <div class="sec-hd"><span class="sec-n">12</span><h2 class="sec-t">Navigation</h2></div>
+        <div style="display:grid;grid-template-columns:220px 1fr;gap:20px;align-items:start">
+          <div style="background:var(--bg-surface);border:1px solid var(--border-col);padding:8px 0">
+            <div style="padding:10px 14px;border-bottom:1px solid var(--border-col);margin-bottom:4px"><span style="font-family:'JetBrains Mono';font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted)">PROJECTS</span></div>
+            <div class="sb-item active"><span class="sb-dot"></span>The MECH Studio</div>
+            <div class="sb-item"><span class="sb-dot"></span>Studio CRM</div>
+            <div class="sb-item"><span class="sb-dot"></span>Superapp UI</div>
+            <div style="padding:10px 14px 3px;margin-top:4px"><span style="font-family:'JetBrains Mono';font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted)">ACTIONS</span></div>
+            <div class="sb-item"><span class="sb-dot"></span>All Tasks</div>
+            <div class="sb-item"><span class="sb-dot"></span>Inbox</div>
+          </div>
+          <div class="demo-block"><span class="demo-lbl">Active state</span><div style="display:flex;flex-direction:column;gap:8px"><span style="font-family:'Poppins';font-size:12px;color:var(--text-secondary);line-height:1.6">Active item: <code>border-left: 2px solid mech-orange</code> + base bg lift.</span><span style="font-family:'Poppins';font-size:12px;color:var(--text-secondary);line-height:1.6">Hover: <code>background: ink-20</code>. No border change on hover.</span></div></div>
+        </div>
+      </div>
+
+      <!-- 13 DIVIDERS -->
+      <div class="section" id="dividers">
+        <div class="sec-hd"><span class="sec-n">13</span><h2 class="sec-t">Dividers</h2></div>
+        <div class="demo-block" style="max-width:520px"><span class="demo-lbl">Variants</span>
+          <div class="div-stack">
+            <div><span class="div-meta">Strong - 1px solid ink-80</span><hr class="d-sol"></div>
+            <div><span class="div-meta">Default - 1px solid ink-20</span><hr class="d-def"></div>
+            <div><span class="div-meta">Dashed - section separator</span><hr class="d-dsh"></div>
+            <div><span class="div-meta">Labeled</span><div class="d-lbl"><hr><span>SECTION</span><hr></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 14 MOTION -->
+      <div class="section" id="motion">
+        <div class="sec-hd"><span class="sec-n">14</span><h2 class="sec-t">Motion</h2></div>
+        <div class="sub"><div class="sub-t">Duration scale</div>
+          <div class="mc-row"><div class="mc"><span class="mc-n">instant</span><span class="mc-v">80ms</span></div><div class="mc"><span class="mc-n">fast</span><span class="mc-v">150ms</span></div><div class="mc"><span class="mc-n">base</span><span class="mc-v">200ms</span></div><div class="mc"><span class="mc-n">slow</span><span class="mc-v">300ms</span></div><div class="mc"><span class="mc-n">crawl</span><span class="mc-v">500ms</span></div></div>
+        </div>
+        <div class="sub"><div class="sub-t">Easing - flat, no spring</div>
+          <div class="mc-row"><div class="mc"><span class="mc-n">default</span><span class="mc-v" style="font-size:9px">cubic-bezier(0.4, 0, 0.2, 1)</span></div><div class="mc"><span class="mc-n">sharp</span><span class="mc-v" style="font-size:9px">cubic-bezier(0.4, 0, 0.6, 1)</span></div><div class="mc"><span class="mc-n">out</span><span class="mc-v" style="font-size:9px">cubic-bezier(0, 0, 0.2, 1)</span></div></div>
+        </div>
+      </div>
+
+      <!-- 15 RULES -->
+      <div class="section" id="rules">
+        <div class="sec-hd"><span class="sec-n">15</span><h2 class="sec-t">Usage Rules</h2></div>
+        <div class="rule-grid">
+          <div class="rule-card"><div class="rule-title">Sharp Geometry</div><ul class="rule-list"><li>radius:0 on all elements by default</li><li>Toggle track: only round exception</li><li class="no">Rounded buttons or cards</li><li class="no">radius-md, radius-lg anywhere</li></ul></div>
+          <div class="rule-card"><div class="rule-title">Flat Surface</div><ul class="rule-list"><li>Depth via border + bg contrast only</li><li>Hover: border or fill change</li><li>Active: 2px orange border</li><li class="no">box-shadow on cards or buttons</li><li class="no">drop-shadow or filter</li></ul></div>
+          <div class="rule-card"><div class="rule-title">The Orange Rule</div><ul class="rule-list"><li>One CTA per view maximum</li><li>Active borders and indicators</li><li>Progress fill and data signals</li><li class="no">Large background fills</li><li class="no">Decoration of any kind</li></ul></div>
+          <div class="rule-card warn"><div class="rule-title">Button Font</div><ul class="rule-list"><li>All buttons: Space Grotesk always</li><li>Link buttons: in-context secondary actions</li><li class="no">Poppins on any button</li><li class="no">Link buttons as primary CTAs</li></ul></div>
+          <div class="rule-card ink"><div class="rule-title">Monospace</div><ul class="rule-list"><li>All counts, IDs, percentages</li><li>Timestamps, durations, versions</li><li class="no">Body text or headings</li></ul></div>
+          <div class="rule-card ink"><div class="rule-title">Uppercase</div><ul class="rule-list"><li>Status tags, section headers</li><li>Breadcrumbs, table headers</li><li>Form labels</li><li class="no">Page titles, button labels, errors</li></ul></div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+
+    <div class="ds-footer">
+      <span class="ft-l">MECH Design System - The MECH Studio - v2.0.0</span>
+      <span class="ft-r">ds.themech.studio</span>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /shell -->
+
+<!-- COPY TOAST -->
+<div class="toast" id="toast">Copied to clipboard</div>
+
+<script>
+// Download MECH_DS.md
+function downloadMD() {
+  const a = document.createElement('a');
+  a.href = 'https://ds.themech.studio/MECH_DS.md';
+  a.download = 'MECH_DS.md';
+  a.click();
+  showToast('Downloading MECH_DS.md');
+}
+
+// Theme toggle
+const html = document.documentElement;
+const btn  = document.getElementById('themeBtn');
+const icon = document.getElementById('themeIcon');
+const lbl  = document.getElementById('themeLabel');
+
+let dark = false;
+
+function toggleTheme() {
+  dark = !dark;
+  html.setAttribute('data-theme', dark ? 'dark' : 'light');
+  icon.textContent = dark ? '●' : '○';
+  lbl.textContent  = dark ? 'Dark' : 'Light';
+  // Rebuild progress bars with correct colors
+  buildBars();
+}
+
+// Sidebar nav
+function go(id, el) {
+  document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+  const t = document.getElementById(id);
+  if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// Mobile nav
+function goMob(id, el) {
+  document.querySelectorAll('.mob-pill').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+  const t = document.getElementById(id);
+  if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// Radio
+function selR(el) {
+  document.querySelectorAll('#rg .radio-item').forEach(i => i.classList.remove('on'));
+  el.classList.add('on');
+}
+
+// Checkbox
+function togC(el) { el.classList.toggle('on'); }
+
+// Progress bars
+function buildBars() {
+  const fill  = dark ? '#FF5B24' : '#FF5B24';
+  const empty = dark ? '#3A3330' : '#D4C8C2';
+  [['bar1',73],['bar2',56],['bar3',91]].forEach(([id, pct]) => {
+    const el = document.getElementById(id);
+    const n  = 60, f = Math.round(pct/100*n);
+    el.innerHTML = Array.from({length:n}, (_,i) =>
+      `<div style="flex:1;border-radius:0;background:${i<f?fill:empty}"></div>`
+    ).join('');
+  });
+}
+buildBars();
+
+// Copy token import
+function copyToken() {
+  const text = '<link rel="stylesheet" href="https://ds.themech.studio/tokens.css">';
+  navigator.clipboard.writeText(text).then(() => showToast('Copied to clipboard'));
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+</script>
+</body>
+</html>
